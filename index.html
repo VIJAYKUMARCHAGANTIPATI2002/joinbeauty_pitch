@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoinBeauty Final Pitch Deck for INSTAGLAM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scroll, handled by slides container */
+        }
+        #presentation-container {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            background-color: #f0f2f5;
+        }
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3); /* Dark overlay for text readability */
+            z-index: 1;
+        }
+        .slide.slide-light-bg::before {
+             background: rgba(255, 255, 255, 0.3); /* Light overlay for light BG slides */
+        }
+        .slide.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            max-width: 1600px; /* Increased max width for larger screens */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            padding: 2rem 4rem;
+        }
+        .content-box {
+             background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 2rem 3rem; /* Default padding */
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            color: #1f2937;
+            text-shadow: none;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 3rem;
+            color: #14B8A6;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .nav-button {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 100;
+        }
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        #prev-slide {
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            display: none;
+        }
+        #next-slide {
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+        }
+        #fullscreen-btn {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            background-color: rgba(0,0,0,0.4);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.75rem;
+            color: #14B8A6;
+            flex-shrink: 0;
+        }
+        .feature-card, .vision-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid #14B8A6;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #1f2937;
+            text-shadow: none;
+        }
+        .feature-card:hover, .vision-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .feature-title, .vision-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #111827;
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 767px) {
+            .slide-content {
+                padding: 1rem;
+                justify-content: flex-start;
+                padding-top: 5rem;
+                overflow-y: auto;
+            }
+             .slide-content::-webkit-scrollbar { display: none; }
+            .content-box {
+                padding: 1.5rem;
+                width: 100%;
+            }
+            #prev-slide, #next-slide { display: none; }
+             #fullscreen-btn { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <button id="fullscreen-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+        </svg>
+        <span>Fullscreen</span>
+    </button>
+    <div id="presentation-container">
+
+        <!-- Slide 1: Introduction -->
+        <div id="slide-1" class="slide" style="background-image: url('https://images.unsplash.com/photo-1556761175-b413da4b2488?q=80&w=2070&auto=format&fit=crop');">
+            <div class="slide-content text-center">
+                <h1 class="logo !text-white !text-5xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">JoinBeauty</h1>
+                <p class="text-xl md:text-2xl mt-2 mb-8">A Partnership Proposal for <span class="font-bold">INSTAGLAM</span></p>
+                <h2 class="text-3xl md:text-5xl font-bold mb-10">Connecting Beauty & Wellness to the World</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                     <div class="bg-white/80 backdrop-blur-sm rounded-lg p-6 text-center shadow-lg text-gray-800" style="text-shadow: none;">
+                        <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=AR" alt="Dr. A. S. Reddy" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-teal-500">
+                        <h4 class="text-xl font-bold">Dr. A. S. Reddy</h4>
+                        <p class="text-teal-600 font-semibold">CEO & Co-founder</p>
+                    </div>
+                    <div class="bg-white/80 backdrop-blur-sm rounded-lg p-6 text-center shadow-lg text-gray-800" style="text-shadow: none;">
+                        <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=VK" alt="CH VIJAY KUMAR" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-teal-500">
+                        <h4 class="text-xl font-bold">CH VIJAY KUMAR</h4>
+                        <p class="text-teal-600 font-semibold">CTO & Co-founder</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Business Partner Features -->
+        <div id="slide-2" class="slide slide-light-bg" style="background-color: #f0f9ff;">
+             <div class="slide-content">
+                <div class="content-box w-full">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">The BeautyHub: Your Business Command Center</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>Sales & Customer Dashboard</h3>
+                            <p class="text-gray-600">Track key metrics, identify top customers, and gain insights on service performance.</p>
+                        </div>
+                         <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M-4.5 12h18" /></svg>Smart Calendar & Bookings</h3>
+                            <p class="text-gray-600">Visually manage all appointments, track booking status, and view client details instantly.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.952a4.5 4.5 0 014.5 0m-4.5 0a4.5 4.5 0 00-4.5 0m3.75 4.5A3.75 3.75 0 017.5 15.6a3.75 3.75 0 013.75-3.75m0 0h3.75M3.75 15.6a3.75 3.75 0 013.75-3.75m0 0v-3.75m0 3.75c-1.355 0-2.593-.56-3.5-1.5m3.5 1.5v2.25m3.75-15A3.75 3.75 0 0115 5.312m0 0c1.355 0 2.593.56 3.5 1.5m-3.5-1.5V.75m3.75 15a3.75 3.75 0 01-3.75 3.75M15 15.6a3.75 3.75 0 01-3.75 3.75m0 0h-3.75m3.75 0c1.355 0 2.593.56 3.5 1.5" /></svg>Client Management (CRM)</h3>
+                            <p class="text-gray-600">Build a comprehensive client database with full booking history and contact information.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg>Service Catalog Control</h3>
+                            <p class="text-gray-600">Easily build, categorize, and price your entire service menu with complete flexibility.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a2.25 2.25 0 01-2.25 2.25H5.25a2.25 2.25 0 01-2.25-2.25v-8.25a2.25 2.25 0 012.25-2.25h13.5a2.25 2.25 0 012.25 2.25z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v-3.75m0 0h-3.75m3.75 0h3.75M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>Manage Offers & Promotions</h3>
+                            <p class="text-gray-600">Create, manage, and schedule custom special offers and discounts to drive bookings.</p>
+                        </div>
+                         <div class="feature-card">
+                            <h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.63 2.45m5.96 11.92a14.98 14.98 0 01-5.841 2.58m5.841-2.58L17.25 16m-1.66-1.63a14.98 14.98 0 00-1.282-1.282A14.98 14.98 0 009.629 2.45m5.96 11.92L16.5 13.25m-6.871-1.16a14.98 14.98 0 01-2.58-5.84m2.58 5.84L9.63 13.25" /></svg>Effortless Onboarding</h3>
+                            <p class="text-gray-600">A simple 4-step path to growth: Sign Up, Get Verified, Set Up Profile, and Go Live.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Customer Features -->
+        <div id="slide-3" class="slide" style="background-image: url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=2070&auto=format&fit=crop');">
+             <div class="slide-content">
+                <div class="content-box w-full max-w-6xl">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">The Customer Journey, Redefined</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg><span>Explore Services</span></h3><p class="text-gray-600">Easily search and discover top-rated salons, spas, and stylists.</p></div>
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M-4.5 12h18" /></svg><span>Seamless Booking</span></h3><p class="text-gray-600">View real-time availability and book appointments instantly, 24/7.</p></div>
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75c0-.231-.035-.454-.1-.664M6.75 7.5h10.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25-2.25H6.75a2.25 2.25 0 01-2.25-2.25v-7.5a2.25 2.25 0 012.25-2.25z" /></svg><span>Manage Journey</span></h3><p class="text-gray-600">Track upcoming and view past appointments in one organized place.</p></div>
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg><span>Save Favorites</span></h3><p class="text-gray-600">Keep a personalized list of your most-loved salons and services.</p></div>
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg><span>Secure Payments</span></h3><p class="text-gray-600">Handle all payments easily and securely within the application.</p></div>
+                        <div class="feature-card !border-l-teal-500 text-left"><h3 class="feature-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18m-9-12h18M3 9h18M3 15h18" /></svg><span>Discover Offers</span></h3><p class="text-gray-600">Find exclusive deals, promotions, and packages from top businesses.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Future Vision -->
+        <div id="slide-4" class="slide slide-light-bg" style="background-color: #f3f4f6;">
+             <div class="slide-content">
+                <div class="content-box w-full">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-8">Our Vision for Future Growth</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 7.5v10.5a2.25 2.25 0 002.25 2.25z" /></svg>Conversational AI Advisor</h3>
+                            <p class="text-gray-600">An unbiased AI guide suggesting personalized services, creating an influencer-like user experience.</p>
+                        </div>
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Sponsored Placements</h3>
+                            <p class="text-gray-600">A new revenue stream for partners to boost visibility through sponsored listings and premium offers.</p>
+                        </div>
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2" /></svg>Market Research & Analytics</h3>
+                            <p class="text-gray-600">An R&D module for cosmetic brands to conduct market testing and gather benchmark data.</p>
+                        </div>
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18h3m-3-12h3m-3-3h3m-3-3h3M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>Dedicated Mobile Apps</h3>
+                            <p class="text-gray-600">Fully-featured native iOS and Android apps to enhance user engagement and accessibility.</p>
+                        </div>
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>Personalized Wellness Plans</h3>
+                            <p class="text-gray-600">Advanced tests and report generation to help users track progress and create treatment plans.</p>
+                        </div>
+                        <div class="vision-card">
+                            <h3 class="vision-title"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25L5.106 5.165A2.25 2.25 0 002.856 3H2.25" /></svg>Integrated E-Commerce</h3>
+                            <p class="text-gray-600">An e-commerce marketplace for partners to sell products, linked to user reports and service history.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Thank You -->
+        <div id="slide-5" class="slide" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop');">
+            <div class="slide-content text-center">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4">Thank You</h1>
+                <p class="text-2xl md:text-3xl text-teal-300 font-semibold mb-8" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">Let's Partner to Redefine Beauty, Together.</p>
+                <div class="mt-12 text-xl">
+                    <p class="font-bold logo !text-white" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">JoinBeauty</p>
+                    <a href="https://joinbeauty.care" class="hover:text-teal-300 transition-colors">joinbeauty.care</a>
+                    <span class="mx-2">|</span>
+                    <a href="mailto:team@joinbeauty.care" class="hover:text-teal-300 transition-colors">team@joinbeauty.care</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="prev-slide" class="nav-button">
+        <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+    </div>
+    <div id="next-slide" class="nav-button">
+        <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const container = document.getElementById('presentation-container');
+            const prevButton = document.getElementById('prev-slide');
+            const nextButton = document.getElementById('next-slide');
+            const fullscreenButton = document.getElementById('fullscreen-btn');
+            let currentSlideIndex = 0;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        currentSlideIndex = Array.from(slides).indexOf(entry.target);
+                        updateNavButtons();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            slides.forEach(slide => {
+                observer.observe(slide);
+            });
+            
+            function updateNavButtons() {
+                prevButton.style.display = currentSlideIndex === 0 ? 'none' : 'flex';
+                nextButton.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'flex';
+            }
+
+            function goToSlide(index) {
+                if (index >= 0 && index < slides.length) {
+                    slides[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            
+            nextButton.addEventListener('click', () => {
+                goToSlide(currentSlideIndex + 1);
+            });
+
+            prevButton.addEventListener('click', () => {
+                 goToSlide(currentSlideIndex - 1);
+            });
+            
+            fullscreenButton.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Initial check
+            updateNavButtons();
+        });
+    </script>
+
+</body>
+</html>
